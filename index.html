@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Signature Generator — PT Dinamika Polimerindo</title>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --orange:      #D85A30;
+  --orange-dark: #993C1D;
+  --orange-dim:  rgba(216,90,48,0.10);
+  --orange-line: rgba(216,90,48,0.22);
+  --navy:        #0C447C;
+  --navy-light:  #E6F1FB;
+  --navy-mid:    #B5D4F4;
+  --surface:     #FAFAF8;
+  --surface-2:   #F2F0EB;
+  --surface-3:   #E8E5DF;
+  --ink-1:       #18180F;
+  --ink-2:       #4A4A42;
+  --ink-3:       #8A8A80;
+  --ink-4:       #BDBDB4;
+  --green:       #1D9E75;
+  --r-sm:        5px;
+  --r-md:        9px;
+  --r-lg:        13px;
+  --r-xl:        18px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--surface-2);
+  min-height: 100vh;
+  color: var(--ink-1);
+}
+
+/* TOPBAR */
+.topbar {
+  height: 52px;
+  background: var(--ink-1);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-logo { display:flex; align-items:center; gap:9px; flex:1; }
+.topbar-brand { font-size:13px; font-weight:600; color:#fff; letter-spacing:-0.01em; }
+.topbar-slash { width:1px; height:16px; background:rgba(255,255,255,0.2); margin:0 12px; }
+.topbar-mono { font-size:12px; font-weight:400; color:rgba(255,255,255,0.45); font-family:'Courier New',Courier,monospace; }
+.topbar-pill { font-size:10px; font-weight:600; background:var(--orange); color:#fff; padding:3px 9px; border-radius:20px; letter-spacing:0.03em; text-transform:uppercase; }
+
+/* SHELL */
+.shell { display:grid; grid-template-columns:320px 1fr; min-height:calc(100vh - 52px); }
+
+/* SIDEBAR */
+.sidebar { background:#fff; border-right:1px solid var(--surface-3); display:flex; flex-direction:column; overflow-y:auto; max-height:calc(100vh - 52px); position:sticky; top:52px; }
+.sb-section { padding:18px 18px 0; border-bottom:1px solid var(--surface-2); }
+.sb-section:last-child { border-bottom:none; flex:1; padding-bottom:24px; }
+.sb-label { font-size:10px; font-weight:600; color:var(--ink-3); letter-spacing:0.08em; text-transform:uppercase; font-family:'Courier New',Courier,monospace; margin-bottom:14px; display:flex; align-items:center; gap:7px; }
+.sb-label::after { content:''; flex:1; height:1px; background:var(--surface-3); }
+
+.fld { margin-bottom:12px; }
+.fld label { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:500; color:var(--ink-2); margin-bottom:4px; }
+.fld label .locked { font-size:9px; background:var(--surface-2); color:var(--ink-3); padding:1px 5px; border-radius:3px; font-family:'Courier New',Courier,monospace; margin-left:auto; }
+.fld input { width:100%; height:35px; padding:0 10px; border:1px solid var(--surface-3); border-radius:var(--r-sm); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; font-size:13px; color:var(--ink-1); background:var(--surface); outline:none; transition:border-color 0.15s,box-shadow 0.15s; }
+.fld input:focus { border-color:var(--orange); box-shadow:0 0 0 3px var(--orange-dim); background:#fff; }
+.fld input[readonly] { background:var(--surface-2); color:var(--ink-3); cursor:default; }
+.fld input[readonly]:focus { border-color:var(--surface-3); box-shadow:none; }
+.fld-sub { font-size:10px; color:var(--ink-3); margin-top:3px; }
+.fld:last-of-type { margin-bottom:18px; }
+
+/* STYLE PILLS */
+.style-row { display:flex; gap:6px; padding-bottom:18px; flex-wrap:wrap; }
+.sty-pill { display:flex; align-items:center; gap:6px; padding:6px 12px 6px 8px; border:1px solid var(--surface-3); border-radius:20px; cursor:pointer; font-size:12px; font-weight:500; color:var(--ink-2); background:var(--surface); transition:all 0.12s; user-select:none; }
+.sty-pill:hover { border-color:var(--orange-line); background:var(--orange-dim); color:var(--orange-dark); }
+.sty-pill.active { border-color:var(--orange); background:var(--orange-dim); color:var(--orange-dark); font-weight:600; }
+.sty-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+
+/* TOGGLES */
+.tog-list { padding-bottom:0; display:flex; flex-direction:column; gap:1px; }
+.tog-row { display:flex; align-items:center; justify-content:space-between; padding:8px 8px; border-radius:var(--r-sm); cursor:pointer; transition:background 0.1s; }
+.tog-row:hover { background:var(--surface-2); }
+.tog-label { font-size:12.5px; color:var(--ink-2); font-weight:400; display:flex; align-items:center; gap:8px; pointer-events:none; }
+.tog-icon { width:13px; height:13px; color:var(--ink-3); flex-shrink:0; }
+.sw { position:relative; width:34px; height:20px; flex-shrink:0; pointer-events:none; }
+.sw input { opacity:0; width:0; height:0; position:absolute; }
+.sw-track { position:absolute; inset:0; background:var(--surface-3); border-radius:10px; transition:background 0.18s; }
+.sw input:checked + .sw-track { background:var(--orange); }
+.sw-thumb { position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.18); transition:transform 0.18s; }
+.sw input:checked ~ .sw-thumb { transform:translateX(14px); }
+
+/* EVENT BANNER SECTION */
+.event-sb-section { display:none; }
+.event-sb-section.has-events { display:block; }
+.event-card { border:1px solid var(--surface-3); border-radius:var(--r-sm); margin-bottom:8px; overflow:hidden; transition:border-color 0.15s; }
+.event-card.active-event { border-color:var(--orange-line); background:var(--orange-dim); }
+.event-tog-row { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; cursor:pointer; }
+.event-tog-row:hover { background:rgba(0,0,0,0.02); }
+.event-info { flex:1; }
+.event-name { font-size:12px; font-weight:600; color:var(--orange-dark); }
+.event-date { font-size:10px; color:var(--ink-3); margin-top:1px; }
+.event-badge { font-size:9px; font-weight:700; background:#dcfce7; color:#166534; border-radius:99px; padding:2px 7px; letter-spacing:0.05em; margin-right:8px; }
+.event-thumb { display:none; padding:0 8px 8px; }
+.event-thumb img { width:100%; height:auto; display:block; border-radius:4px; }
+.sw input:checked ~ .event-show-thumb .event-thumb { display:block; }
+
+/* CONTENT */
+.content { display:flex; flex-direction:column; padding:22px; gap:14px; min-width:0; }
+
+/* PREVIEW CARD */
+.preview-card { background:#fff; border:1px solid var(--surface-3); border-radius:var(--r-xl); overflow:hidden; }
+.pc-header { padding:14px 20px 10px; border-bottom:1px solid var(--surface-3); }
+.pc-header-title { font-size:11px; font-family:'Courier New',Courier,monospace; color:var(--ink-3); letter-spacing:0.04em; text-transform:uppercase; }
+.pc-style-badge { font-size:10px; font-family:'Courier New',Courier,monospace; color:var(--orange); background:var(--orange-dim); padding:2px 8px; border-radius:4px; display:inline-block; margin-top:4px; }
+.pc-body { background:#ffffff; padding:24px 28px; overflow-x:auto; overflow-y:hidden; width:100%; box-sizing:border-box; }
+.pc-body > div { width:100%; box-sizing:border-box; }
+.preview-scaler { display:block; }
+
+/* ACTION ROW */
+.action-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border-radius:var(--r-md); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif; font-size:13px; font-weight:600; cursor:pointer; border:none; letter-spacing:-0.01em; transition:all 0.12s; }
+.btn:active { transform:scale(0.97); }
+.btn-cta { background:var(--orange); color:#fff; }
+.btn-cta:hover { background:var(--orange-dark); }
+.btn-ghost { background:transparent; color:var(--ink-2); border:1px solid var(--surface-3); }
+.btn-ghost:hover { background:var(--surface-2); }
+.btn.ok { background:var(--green); color:#fff; }
+.btn svg { width:15px; height:15px; flex-shrink:0; }
+.style-readout { margin-left:auto; font-size:11px; font-family:'Courier New',Courier,monospace; color:var(--ink-3); background:var(--surface-2); padding:4px 10px; border-radius:20px; }
+
+/* GUIDE */
+.guide-strip { background:#fff; border:1px solid var(--surface-3); border-radius:var(--r-lg); padding:14px 18px; display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+.gs-step { display:flex; align-items:flex-start; gap:9px; padding-right:16px; }
+.gs-step + .gs-step { padding-left:16px; border-left:1px solid var(--surface-3); padding-right:16px; }
+.gs-step:last-child { padding-right:0; }
+.gs-num { font-size:10px; font-weight:700; font-family:'Courier New',Courier,monospace; color:var(--orange); background:var(--orange-dim); border:1px solid var(--orange-line); width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.gs-text { font-size:11.5px; color:var(--ink-2); line-height:1.5; }
+.gs-text b { color:var(--ink-1); font-weight:600; }
+
+@media (max-width:820px) {
+  .shell { grid-template-columns:1fr; }
+  .sidebar { max-height:none; position:static; }
+  .guide-strip { grid-template-columns:1fr; }
+  .content { padding:14px; }
+  .gs-step + .gs-step { border-left:none; border-top:1px solid var(--surface-3); padding:12px 0 0; margin-top:12px; }
+  .pc-body { padding:14px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <rect x="0" y="0" width="9" height="9" rx="1.5" fill="#D85A30"/>
+      <rect x="11" y="0" width="9" height="9" rx="1.5" fill="#D85A30" opacity="0.5"/>
+      <rect x="0" y="11" width="9" height="9" rx="1.5" fill="#D85A30" opacity="0.5"/>
+      <rect x="11" y="11" width="9" height="9" rx="1.5" fill="#D85A30"/>
+    </svg>
+    <span class="topbar-brand">Dinamika Polimerindo</span>
+    <div class="topbar-slash"></div>
+    <span class="topbar-mono">signature.generator</span>
+  </div>
+  <div class="topbar-pill">Internal Tool</div>
+</div>
+
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="sb-section">
+      <div class="sb-label">Karyawan</div>
+      <div class="fld">
+        <label>Nama Lengkap</label>
+        <input type="text" id="f-name" value="Kristian Bunjamin" placeholder="Nama lengkap">
+      </div>
+      <div class="fld">
+        <label>Jabatan</label>
+        <input type="text" id="f-title" value="President Director" placeholder="Jabatan">
+      </div>
+      <div class="fld">
+        <label>No. WhatsApp</label>
+        <input type="text" id="f-wa" value="+6281322889922" placeholder="+62...">
+        <div class="fld-sub">Kosongkan = tidak ditampilkan</div>
+      </div>
+      <div class="fld">
+        <label>Email</label>
+        <input type="text" id="f-email" value="" placeholder="nama@polimerindo.com">
+      </div>
+      <div class="fld">
+        <label>Website <span class="locked">LOCKED</span></label>
+        <input type="text" value="www.polimerindo.com" readonly>
+      </div>
+    </div>
+
+    <!-- EVENT BANNER SECTION -->
+    <div class="sb-section event-sb-section" id="event-sb-section">
+      <div class="sb-label">Banner Event</div>
+      <div id="event-list"></div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Style Signature</div>
+      <div class="style-row">
+        <div class="sty-pill active" data-style="classic" onclick="setStyle('classic')">
+          <div class="sty-dot" style="background:#D85A30;"></div> Classic
+        </div>
+        <div class="sty-pill" data-style="executive" onclick="setStyle('executive')">
+          <div class="sty-dot" style="background:linear-gradient(135deg,#0C447C,#1A6BB5);border-radius:50%;"></div> Executive
+        </div>
+        <div class="sty-pill" data-style="minimal" onclick="setStyle('minimal')">
+          <div class="sty-dot" style="background:linear-gradient(135deg,#2D2D2D,#8A8A80);border-radius:50%;"></div> Minimal
+        </div>
+      </div>
+    </div>
+
+    <div class="sb-section">
+      <div class="sb-label">Opsi</div>
+      <div class="tog-list">
+        <div class="tog-row" onclick="toggle('t-disclaimer')">
+          <span class="tog-label">
+            <svg class="tog-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Disclaimer bilingual
+          </span>
+          <label class="sw" onclick="event.stopPropagation()">
+            <input type="checkbox" id="t-disclaimer" checked onchange="renderPreview()">
+            <div class="sw-track"></div>
+            <div class="sw-thumb"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <div class="preview-card">
+      <div class="pc-header">
+        <div class="pc-header-title">Email Signature Preview</div>
+        <div class="pc-style-badge" id="style-badge">classic</div>
+      </div>
+      <div class="pc-body" id="pc-body">
+        <div class="preview-scaler" id="preview-scaler">
+          <div id="sig-preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-cta" id="copy-btn" onclick="copySignature()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        Salin Signature
+      </button>
+      <button class="btn btn-ghost" onclick="renderPreview()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        Refresh
+      </button>
+      <div class="style-readout" id="style-readout">&#9679; Classic</div>
+    </div>
+
+    <div class="guide-strip">
+      <div class="gs-step">
+        <div class="gs-num">1</div>
+        <div class="gs-text">Isi form di kiri. Preview update otomatis setiap ada perubahan.</div>
+      </div>
+      <div class="gs-step">
+        <div class="gs-num">2</div>
+        <div class="gs-text"><b>Gmail:</b> Settings &rarr; See all settings &rarr; Signature &rarr; Create new &rarr; Paste <code style="font-size:10px;background:#f0ede8;padding:1px 4px;border-radius:3px;">Ctrl+Shift+V</code></div>
+      </div>
+      <div class="gs-step">
+        <div class="gs-num">3</div>
+        <div class="gs-text"><b>Outlook:</b> File &rarr; Options &rarr; Mail &rarr; Signatures &rarr; New &rarr; Paste as HTML.</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<textarea id="copy-ta" style="position:fixed;left:-9999px;top:-9999px;opacity:0;" readonly></textarea>
+
+<script>
+const DISCLAIMER_EN = `"This electronic mail and its attachment(s) is intended only for the recipient(s) to whom it is addressed. It may contain information which may be confidential and/or protected by legal privilege. If you are not the intended recipient(s), reading, disclosing, printing, copying, forwarding this electronic mail and its attachment(s) and/or taking any action in reliance on the information in this electronic mail and its attachment(s) are prohibited. PT Dinamika Polimerindo shall not be liable in respect of communication made by its employee which is contrary to the company policy and/or outside the scope of the employment of the individual concerned. The employee will be personally liable for any damages or other liability arising."`;
+const DISCLAIMER_ID = `"Surat elektronik ini beserta lampirannya dimaksudkan hanya untuk penerima kepada siapa surat tersebut ditujukan. Informasi yang terdapat di dalamnya dapat bersifat rahasia dan/atau dilindungi oleh hukum. Jika Anda bukan penerima yang dituju, Anda dilarang untuk membaca, mengungkapkan, mencetak, menyalin, meneruskan surat elektronik ini beserta lampirannya dan/atau mengambil tindakan apapun berdasarkan informasi yang terdapat dalam surat elektronik ini beserta lampirannya. PT Dinamika Polimerindo tidak bertanggung jawab atas setiap komunikasi karyawan yang bertentangan dengan kebijakan perusahaan dan/atau berada di luar lingkup pekerjaannya. Segala resiko dan akibat yang ditimbulkan merupakan tanggung jawab personal."`;
+
+let currentStyle = 'classic';
+let EVENTS = [];
+
+function getVal(id) { return (document.getElementById(id)?.value || '').trim(); }
+function getCheck(id) { return document.getElementById(id)?.checked; }
+
+function toggle(id) {
+  const el = document.getElementById(id);
+  if (el) { el.checked = !el.checked; renderPreview(); }
+}
+
+// ─── LOAD EVENTS ─────────────────────────────────────────────────────────────
+async function loadEvents() {
+  try {
+    const resp = await fetch('events.json?t=' + Date.now());
+    const data = await resp.json();
+    EVENTS = (data.events || []).filter(e => e.active !== false);
+    renderEventSection();
+    renderPreview();
+  } catch(e) {
+    EVENTS = [];
+  }
+}
+
+function renderEventSection() {
+  const section = document.getElementById('event-sb-section');
+  const list = document.getElementById('event-list');
+  if (!EVENTS.length) {
+    section.classList.remove('has-events');
+    list.innerHTML = '';
+    return;
+  }
+  section.classList.add('has-events');
+  list.innerHTML = EVENTS.map(ev => {
+    const isNew = ev.is_new !== false;
+    return `<div class="event-card ${isNew ? 'active-event' : ''}">
+      <div class="event-tog-row" onclick="toggleEvent('ev-${ev.id}')">
+        <div class="event-info">
+          <div class="event-name">${ev.name}</div>
+          ${ev.date ? `<div class="event-date">${ev.date}</div>` : ''}
+        </div>
+        ${isNew ? '<span class="event-badge">AKTIF</span>' : ''}
+        <label class="sw" onclick="event.stopPropagation()">
+          <input type="checkbox" id="ev-${ev.id}" ${isNew ? 'checked' : ''} onchange="renderPreview()">
+          <div class="sw-track"></div>
+          <div class="sw-thumb"></div>
+        </label>
+      </div>
+      ${ev.banner_url ? `<div class="event-thumb" id="thumb-${ev.id}"><img src="${ev.banner_url}" alt="${ev.name}" loading="lazy"></div>` : ''}
+    </div>`;
+  }).join('');
+
+  // Show thumbs for checked events
+  EVENTS.forEach(ev => updateThumbVisibility(ev.id));
+}
+
+function toggleEvent(checkId) {
+  const el = document.getElementById(checkId);
+  if (el) {
+    el.checked = !el.checked;
+    const evId = checkId.replace('ev-', '');
+    updateThumbVisibility(evId);
+    renderPreview();
+  }
+}
+
+function updateThumbVisibility(evId) {
+  const cb = document.getElementById('ev-' + evId);
+  const thumb = document.getElementById('thumb-' + evId);
+  if (cb && thumb) thumb.style.display = cb.checked ? 'block' : 'none';
+}
+
+function getActiveEventBanners() {
+  return EVENTS.filter(ev => {
+    const cb = document.getElementById('ev-' + ev.id);
+    return cb && cb.checked && ev.banner_url;
+  });
+}
+
+function buildEventBannersHTML(activeEvents) {
+  if (!activeEvents.length) return '';
+  const imgs = activeEvents.map(ev =>
+    `<a href="${ev.link || '#'}" style="display:block;text-decoration:none;${ev.link ? '' : 'pointer-events:none;'}" ${ev.link ? 'target="_blank"' : ''}>
+      <img src="${ev.banner_url}" alt="${ev.name}" width="100%" style="display:block;width:100%;height:auto;border:0;outline:none;border-radius:3px;margin-bottom:${activeEvents.length > 1 ? '6' : '0'}px;">
+    </a>`
+  ).join('');
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="width:100%;border-collapse:collapse;margin-top:10px;">
+    <tr><td style="padding:0;">${imgs}</td></tr>
+  </table>`;
+}
+
+// ─── BANNER (company fixed) ───────────────────────────────────────────────────
+function buildBanner() {
+  const LOGO_B64   = 'https://i.imgur.com/8QLVGc2.png';
+  const SHAPES_B64 = 'https://i.imgur.com/E9J68QH.png';
+
+  const topSection =
+    '<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="width:100%;border-collapse:collapse;background-color:#f1f2f2;background-image:radial-gradient(circle at top right,#fb6b2b 0%,#f1f2f2 22%);overflow:visible;">'
+    + '<tr>'
+    + '<td valign="middle" align="left" style="padding:20px 0 20px 28px;width:195px;white-space:nowrap;" width="195">'
+    + '<img src="' + LOGO_B64 + '" alt="Dinamika Polimerindo" width="124" height="50" style="width:124px;height:50px;display:block;border:0;outline:none;" />'
+    + '</td>'
+    + '<td valign="middle" align="center" style="padding:20px 12px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#2a2a2a;font-weight:400;">'
+    + '<div style="display:inline-block;text-align:left;word-break:break-word;overflow-wrap:break-word;max-width:100%;">Injection Molding Indonesia&mdash;Reliable Quality in Every Shot.</div>'
+    + '</td>'
+    + '<td valign="bottom" align="right" style="padding:0;width:120px;overflow:visible;" width="120">'
+    + '<img src="' + SHAPES_B64 + '" alt="" width="120" height="120" style="width:120px;height:120px;display:block;border:0;outline:none;margin-top:-28px;" />'
+    + '</td>'
+    + '</tr>'
+    + '</table>';
+
+  const bottomSection =
+    '<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="width:100%;border-collapse:collapse;background-color:#ffffff;table-layout:fixed;">'
+    + '<tr>'
+    + '<td valign="top" align="left" width="33%" style="width:33%;padding:18px 12px 18px 24px;font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#2a2a2a;font-weight:400;">'
+    + '<a href="https://www.polimerindo.com" style="color:#2a2a2a;text-decoration:none;">www.polimerindo.com</a>'
+    + '</td>'
+    + '<td valign="top" align="center" width="34%" style="width:34%;padding:18px 12px;font-family:Arial,Helvetica,sans-serif;">'
+    + '<table cellpadding="0" cellspacing="0" border="0" role="presentation" align="center" style="border-collapse:collapse;margin:0 auto;">'
+    + '<tr><td align="left" style="text-align:left;font-family:Arial,Helvetica,sans-serif;">'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;font-weight:700;color:#1c1c1c;margin-bottom:5px;white-space:nowrap;text-align:left;">PT Dinamika Polimerindo</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9.5px;font-weight:700;color:#1c1c1c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;text-align:left;">OFFICE</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#3a3a3a;line-height:1.55;margin-bottom:3px;text-align:left;">Kedoya Elok Plaza Blok DC-50<br />Jl. Panjang, Jakarta Barat<br />Indonesia 11520</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#3a3a3a;text-align:left;">P. +62 21 580 6203&nbsp;&nbsp;F. +62 21 580 6204</div>'
+    + '</td></tr>'
+    + '</table>'
+    + '</td>'
+    + '<td valign="top" align="right" width="33%" style="width:33%;padding:18px 24px 18px 12px;font-family:Arial,Helvetica,sans-serif;">'
+    + '<table cellpadding="0" cellspacing="0" border="0" role="presentation" align="right" style="border-collapse:collapse;">'
+    + '<tr><td align="left" style="text-align:left;font-family:Arial,Helvetica,sans-serif;">'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;font-weight:700;color:#1c1c1c;margin-bottom:5px;white-space:nowrap;text-align:left;">&nbsp;</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9.5px;font-weight:700;color:#1c1c1c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;text-align:left;">FACTORY</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#3a3a3a;line-height:1.55;margin-bottom:3px;text-align:left;">Jl. Abdul Rahman Saleh No. 8<br />Jurumudi, Tangerang<br />Indonesia 15124</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#3a3a3a;text-align:left;">P. +62 21 540 0288</div>'
+    + '</td></tr>'
+    + '</table>'
+    + '</td>'
+    + '</tr>'
+    + '</table>';
+
+  return '<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="width:100%;border-collapse:collapse;margin-top:14px;overflow:visible;">'
+    + '<tr><td style="padding:0;overflow:visible;">' + topSection + '</td></tr>'
+    + '<tr><td style="padding:0;">' + bottomSection + '</td></tr>'
+    + '</table>';
+}
+
+function buildContact(wa, em, acc) {
+  let h = '';
+  if (wa) {
+    const n = wa.replace(/[^0-9]/g, '');
+    h += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#444;margin-bottom:3px;">WhatsApp : ' + wa + ' (<a href="https://wa.me/' + n + '" style="color:' + acc + ';text-decoration:none;">wa.me/' + n + '</a>)</div>';
+  }
+  if (em) {
+    h += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#444;">Email : <a href="mailto:' + em + '" style="color:' + acc + ';text-decoration:none;">' + em + '</a></div>';
+  }
+  return h;
+}
+
+function buildDisclaimer() {
+  return '<div style="margin-top:14px;"><p style="font-family:Arial,Helvetica,sans-serif;font-size:9px;color:#999;line-height:1.6;margin:0 0 8px;">' + DISCLAIMER_EN + '</p><p style="font-family:Arial,Helvetica,sans-serif;font-size:9px;color:#999;line-height:1.6;margin:0;">' + DISCLAIMER_ID + '</p></div>';
+}
+
+// ─── STYLE BUILDERS ──────────────────────────────────────────────────────────
+function buildClassic(n, t, wa, em, sd, eventBanners) {
+  const acc = '#D85A30';
+  let h = '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td style="border-left:3px solid ' + acc + ';padding-left:13px;"><div style="font-family:Arial,Helvetica,sans-serif;font-size:16.5px;font-weight:700;color:#1a1a1a;margin-bottom:2px;line-height:1.2;">' + n + '</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:600;color:' + acc + ';margin-bottom:9px;">' + t + '</div>' + buildContact(wa, em, acc) + '</td></tr></table>';
+  h += buildBanner();
+  h += buildEventBannersHTML(eventBanners);
+  if (sd) h += buildDisclaimer();
+  return h;
+}
+
+function buildExecutive(n, t, wa, em, sd, eventBanners) {
+  const navy = '#0C447C';
+  const orange = '#D85A30';
+  const linkColor = '#0C447C';
+
+  let contactRows = '';
+  if (wa) {
+    const num = wa.replace(/[^0-9]/g, '');
+    contactRows += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#555555;margin-bottom:4px;">'
+      + '<span style="color:#0C447C;font-weight:600;">WA</span>'
+      + '<span style="color:#CCCCCC;margin:0 7px;">|</span>'
+      + wa
+      + ' <a href="https://wa.me/' + num + '" style="color:' + orange + ';text-decoration:none;font-size:10.5px;font-weight:600;">&#10132; wa.me/' + num + '</a>'
+      + '</div>';
+  }
+  if (em) {
+    contactRows += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#555555;margin-bottom:4px;">'
+      + '<span style="color:#0C447C;font-weight:600;">Email</span>'
+      + '<span style="color:#CCCCCC;margin:0 7px;">|</span>'
+      + '<a href="mailto:' + em + '" style="color:' + linkColor + ';text-decoration:none;">' + em + '</a>'
+      + '</div>';
+  }
+  contactRows += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#555555;">'
+    + '<span style="color:#0C447C;font-weight:600;">Web</span>'
+    + '<span style="color:#CCCCCC;margin:0 7px;">|</span>'
+    + '<a href="https://www.polimerindo.com" style="color:' + linkColor + ';text-decoration:none;">www.polimerindo.com</a>'
+    + '</div>';
+
+  let h = '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:#ffffff;">'
+    + '<tr>'
+    + '<td style="width:4px;background:linear-gradient(180deg,#0C447C 0%,#1A6FCC 100%);border-radius:3px;" valign="top"></td>'
+    + '<td style="padding:0 0 0 14px;" valign="top">'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:700;color:#0C1A2E;line-height:1.15;letter-spacing:-0.3px;">' + n + '</div>'
+    + '<div style="margin:5px 0 10px;">'
+    + '<span style="display:inline-block;border:1.5px solid #0C447C;border-radius:20px;padding:2px 10px;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:700;color:#0C447C;letter-spacing:0.07em;text-transform:uppercase;">' + t + '</span>'
+    + '</div>'
+    + '<div style="height:1px;background:linear-gradient(90deg,#D85A30 0%,rgba(216,90,48,0.15) 100%);margin-bottom:9px;width:100%;max-width:400px;"></div>'
+    + contactRows
+    + '</td>'
+    + '</tr>'
+    + '</table>';
+
+  h += buildBanner();
+  h += buildEventBannersHTML(eventBanners);
+  if (sd) h += buildDisclaimer();
+  return h;
+}
+
+function buildMinimal(n, t, wa, em, sd, eventBanners) {
+  const orange = '#D85A30';
+  const gray = '#666666';
+
+  let contactParts = [];
+  if (wa) {
+    const num = wa.replace(/[^0-9]/g, '');
+    contactParts.push(
+      '<span style="color:' + gray + ';font-size:11.5px;">' + wa + '</span>'
+      + '&nbsp;<a href="https://wa.me/' + num + '" style="color:' + orange + ';text-decoration:none;font-size:11px;">&#8599;</a>'
+    );
+  }
+  if (em) {
+    contactParts.push('<a href="mailto:' + em + '" style="color:' + gray + ';text-decoration:none;font-size:11.5px;">' + em + '</a>');
+  }
+  contactParts.push('<a href="https://www.polimerindo.com" style="color:#AAAAAA;text-decoration:none;font-size:11.5px;">polimerindo.com</a>');
+
+  const dot = '<span style="color:#DDDDDD;margin:0 8px;font-size:9px;vertical-align:middle;">&bull;</span>';
+
+  let h = '<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:#ffffff;">'
+    + '<tr>'
+    + '<td style="padding:0;" valign="top">'
+    + '<table cellpadding="0" cellspacing="0" border="0">'
+    + '<tr>'
+    + '<td style="padding-right:14px;border-right:2px solid ' + orange + ';" valign="middle">'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:700;color:#1A1A1A;line-height:1.2;white-space:nowrap;">' + n + '</div>'
+    + '</td>'
+    + '<td style="padding-left:14px;" valign="middle">'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:600;color:' + orange + ';letter-spacing:0.07em;text-transform:uppercase;white-space:nowrap;">' + t + '</div>'
+    + '</td>'
+    + '</tr>'
+    + '</table>'
+    + '<div style="height:1px;background:linear-gradient(90deg,rgba(216,90,48,0.4) 0%,rgba(216,90,48,0.05) 100%);margin:8px 0;"></div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;">' + contactParts.join(dot) + '</div>'
+    + '</td>'
+    + '</tr>'
+    + '</table>';
+
+  h += buildBanner();
+  h += buildEventBannersHTML(eventBanners);
+  if (sd) h += buildDisclaimer();
+  return h;
+}
+
+function getSigHTML() {
+  const n  = getVal('f-name')  || 'Nama Karyawan';
+  const t  = getVal('f-title') || 'Jabatan';
+  const wa = getVal('f-wa');
+  const em = getVal('f-email');
+  const sd = getCheck('t-disclaimer');
+  const eventBanners = getActiveEventBanners();
+  if (currentStyle === 'executive') return buildExecutive(n, t, wa, em, sd, eventBanners);
+  if (currentStyle === 'minimal')   return buildMinimal(n, t, wa, em, sd, eventBanners);
+  return buildClassic(n, t, wa, em, sd, eventBanners);
+}
+
+function renderPreview() {
+  document.getElementById('sig-preview').innerHTML = getSigHTML();
+}
+
+function setStyle(s) {
+  currentStyle = s;
+  document.querySelectorAll('.sty-pill').forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-style="' + s + '"]').classList.add('active');
+  const labels = { classic:'Classic', executive:'Executive', minimal:'Minimal' };
+  document.getElementById('style-badge').textContent = s;
+  document.getElementById('style-readout').textContent = '● ' + labels[s];
+  renderPreview();
+}
+
+async function copySignature() {
+  const sigHTML = getSigHTML();
+  const btn = document.getElementById('copy-btn');
+  const orig = btn.innerHTML;
+  let copied = false;
+
+  if (navigator.clipboard && window.ClipboardItem) {
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          'text/html': new Blob([sigHTML], { type:'text/html' }),
+          'text/plain': new Blob([sigHTML], { type:'text/plain' })
+        })
+      ]);
+      copied = true;
+    } catch(e1) {}
+  }
+
+  if (!copied) {
+    try {
+      const div = document.createElement('div');
+      div.style.cssText = 'position:fixed;left:-9999px;top:-9999px;';
+      div.innerHTML = sigHTML;
+      document.body.appendChild(div);
+      const range = document.createRange();
+      range.selectNodeContents(div);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      document.execCommand('copy');
+      sel.removeAllRanges();
+      document.body.removeChild(div);
+      copied = true;
+    } catch(e2) {}
+  }
+
+  if (!copied) {
+    try {
+      await navigator.clipboard.writeText(sigHTML);
+      copied = true;
+    } catch(e3) {
+      alert('Browser Anda memblokir akses clipboard.\nSilakan buka di Chrome atau Edge, atau izinkan akses clipboard di pengaturan browser.');
+      return;
+    }
+  }
+
+  if (copied) {
+    btn.classList.add('ok');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><polyline points="20 6 9 17 4 12"/></svg> Tersalin!';
+    setTimeout(() => { btn.classList.remove('ok'); btn.innerHTML = orig; }, 2500);
+  }
+}
+
+['f-name', 'f-title', 'f-wa', 'f-email'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', renderPreview);
+});
+
+renderPreview();
+loadEvents();
+</script>
+</body>
+</html>
