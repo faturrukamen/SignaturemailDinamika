@@ -150,6 +150,17 @@ body {
   .gs-step + .gs-step { border-left:none; border-top:1px solid var(--surface-3); padding:12px 0 0; margin-top:12px; }
   .pc-body { padding:14px 12px; }
 }
+@media (max-width:480px) {
+  .topbar { padding:0 14px; }
+  .topbar-slash, .topbar-mono { display:none; }
+  .topbar-brand { font-size:12px; }
+  .content { padding:10px; }
+  .pc-body { padding:10px 8px; }
+  .action-row { flex-wrap:wrap; }
+  .btn { padding:8px 12px; font-size:12px; }
+  .style-row { gap:4px; }
+  .sty-pill { padding:5px 8px 5px 7px; font-size:11px; }
+}
 </style>
 </head>
 <body>
@@ -406,7 +417,7 @@ function buildBanner() {
     + '<td valign="top" align="center" width="34%" style="width:34%;padding:18px 12px;font-family:Arial,Helvetica,sans-serif;">'
     + '<table cellpadding="0" cellspacing="0" border="0" role="presentation" align="center" style="border-collapse:collapse;margin:0 auto;">'
     + '<tr><td align="left" style="text-align:left;font-family:Arial,Helvetica,sans-serif;">'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;font-weight:700;color:#1c1c1c;margin-bottom:5px;white-space:nowrap;text-align:left;">PT Dinamika Polimerindo</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;font-weight:700;color:#1c1c1c;margin-bottom:5px;word-break:break-word;text-align:left;">PT Dinamika Polimerindo</div>'
     + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9.5px;font-weight:700;color:#1c1c1c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;text-align:left;">OFFICE</div>'
     + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#3a3a3a;line-height:1.55;margin-bottom:3px;text-align:left;">Kedoya Elok Plaza Blok DC-50<br />Jl. Panjang, Jakarta Barat<br />Indonesia 11520</div>'
     + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#3a3a3a;text-align:left;">P. +62 21 580 6203&nbsp;&nbsp;F. +62 21 580 6204</div>'
@@ -436,10 +447,10 @@ function buildContact(wa, em, acc) {
   let h = '';
   if (wa) {
     const n = wa.replace(/[^0-9]/g, '');
-    h += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#444;margin-bottom:3px;">WhatsApp : ' + wa + ' (<a href="https://wa.me/' + n + '" style="color:' + acc + ';text-decoration:none;">wa.me/' + n + '</a>)</div>';
+    h += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#444;margin-bottom:3px;word-break:break-all;overflow-wrap:anywhere;">WhatsApp : ' + wa + ' (<a href="https://wa.me/' + n + '" style="color:' + acc + ';text-decoration:none;">wa.me/' + n + '</a>)</div>';
   }
   if (em) {
-    h += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#444;">Email : <a href="mailto:' + em + '" style="color:' + acc + ';text-decoration:none;">' + em + '</a></div>';
+    h += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#444;word-break:break-all;overflow-wrap:anywhere;">Email : <a href="mailto:' + em + '" style="color:' + acc + ';text-decoration:none;">' + em + '</a></div>';
   }
   return h;
 }
@@ -466,7 +477,7 @@ function buildExecutive(n, t, wa, em, sd, eventBanners) {
   let contactRows = '';
   if (wa) {
     const num = wa.replace(/[^0-9]/g, '');
-    contactRows += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#555555;margin-bottom:4px;">'
+    contactRows += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#555555;margin-bottom:4px;word-break:break-all;overflow-wrap:anywhere;">'
       + '<span style="color:#0C447C;font-weight:600;">WA</span>'
       + '<span style="color:#CCCCCC;margin:0 7px;">|</span>'
       + wa
@@ -474,7 +485,7 @@ function buildExecutive(n, t, wa, em, sd, eventBanners) {
       + '</div>';
   }
   if (em) {
-    contactRows += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#555555;margin-bottom:4px;">'
+    contactRows += '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#555555;margin-bottom:4px;word-break:break-all;overflow-wrap:anywhere;">'
       + '<span style="color:#0C447C;font-weight:600;">Email</span>'
       + '<span style="color:#CCCCCC;margin:0 7px;">|</span>'
       + '<a href="mailto:' + em + '" style="color:' + linkColor + ';text-decoration:none;">' + em + '</a>'
@@ -531,10 +542,10 @@ function buildMinimal(n, t, wa, em, sd, eventBanners) {
     + '<table cellpadding="0" cellspacing="0" border="0">'
     + '<tr>'
     + '<td style="padding-right:14px;border-right:2px solid ' + orange + ';" valign="middle">'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:700;color:#1A1A1A;line-height:1.2;white-space:nowrap;">' + n + '</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:700;color:#1A1A1A;line-height:1.2;word-break:break-word;">' + n + '</div>'
     + '</td>'
     + '<td style="padding-left:14px;" valign="middle">'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:600;color:' + orange + ';letter-spacing:0.07em;text-transform:uppercase;white-space:nowrap;">' + t + '</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:600;color:' + orange + ';letter-spacing:0.07em;text-transform:uppercase;word-break:break-word;">' + t + '</div>'
     + '</td>'
     + '</tr>'
     + '</table>'
