@@ -160,6 +160,10 @@ body {
   .btn { padding:8px 12px; font-size:12px; }
   .style-row { gap:4px; }
   .sty-pill { padding:5px 8px 5px 7px; font-size:11px; }
+  #sig-preview .dyn-col-www { display:none !important; }
+  #sig-preview .dyn-www-m { display:block !important; }
+  #sig-preview .dyn-col-office { width:57% !important; }
+  #sig-preview .dyn-col-factory { width:43% !important; }
 }
 </style>
 </head>
@@ -411,17 +415,20 @@ function buildBanner() {
   const bottomSection =
     '<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="width:100%;border-collapse:collapse;background-color:#ffffff;table-layout:fixed;">'
     + '<tr>'
-    + '<td valign="top" align="left" width="55%" style="width:55%;padding:18px 12px 18px 24px;font-family:Arial,Helvetica,sans-serif;">'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#2a2a2a;margin-bottom:6px;"><a href="https://www.polimerindo.com" style="color:#2a2a2a;text-decoration:none;">www.polimerindo.com</a></div>'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;font-weight:700;color:#1c1c1c;margin-bottom:5px;word-break:break-word;">PT Dinamika Polimerindo</div>'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9.5px;font-weight:700;color:#1c1c1c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;">OFFICE</div>'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#3a3a3a;line-height:1.55;margin-bottom:3px;">Kedoya Elok Plaza Blok DC-50<br />Jl. Panjang, Jakarta Barat<br />Indonesia 11520</div>'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#3a3a3a;">P. +62 21 580 6203&nbsp;&nbsp;F. +62 21 580 6204</div>'
+    + '<td class="dyn-col-www" valign="top" align="left" width="33%" style="width:33%;padding:18px 12px 18px 24px;font-family:Arial,Helvetica,sans-serif;font-size:11.5px;color:#2a2a2a;font-weight:400;">'
+    + '<a href="https://www.polimerindo.com" style="color:#2a2a2a;text-decoration:none;">www.polimerindo.com</a>'
     + '</td>'
-    + '<td valign="top" align="left" width="45%" style="width:45%;padding:18px 20px 18px 12px;font-family:Arial,Helvetica,sans-serif;">'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9.5px;font-weight:700;color:#1c1c1c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;">FACTORY</div>'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#3a3a3a;line-height:1.55;margin-bottom:3px;">Jl. Abdul Rahman Saleh No. 8<br />Jurumudi, Tangerang<br />Indonesia 15124</div>'
-    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#3a3a3a;">P. +62 21 540 0288</div>'
+    + '<td class="dyn-col-office" valign="top" align="left" width="34%" style="width:34%;padding:18px 12px;font-family:Arial,Helvetica,sans-serif;">'
+    + '<div class="dyn-www-m" style="display:none;font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#2a2a2a;margin-bottom:6px;"><a href="https://www.polimerindo.com" style="color:#2a2a2a;text-decoration:none;">www.polimerindo.com</a></div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:11.5px;font-weight:700;color:#1c1c1c;margin-bottom:5px;word-break:break-word;text-align:left;">PT Dinamika Polimerindo</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9.5px;font-weight:700;color:#1c1c1c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;text-align:left;">OFFICE</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#3a3a3a;line-height:1.55;margin-bottom:3px;text-align:left;">Kedoya Elok Plaza Blok DC-50<br />Jl. Panjang, Jakarta Barat<br />Indonesia 11520</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#3a3a3a;text-align:left;">P. +62 21 580 6203&nbsp;&nbsp;F. +62 21 580 6204</div>'
+    + '</td>'
+    + '<td class="dyn-col-factory" valign="top" align="left" width="33%" style="width:33%;padding:18px 24px 18px 12px;font-family:Arial,Helvetica,sans-serif;">'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:9.5px;font-weight:700;color:#1c1c1c;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;text-align:left;">FACTORY</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;color:#3a3a3a;line-height:1.55;margin-bottom:3px;text-align:left;">Jl. Abdul Rahman Saleh No. 8<br />Jurumudi, Tangerang<br />Indonesia 15124</div>'
+    + '<div style="font-family:Arial,Helvetica,sans-serif;font-size:10px;color:#3a3a3a;text-align:left;">P. +62 21 540 0288</div>'
     + '</td>'
     + '</tr>'
     + '</table>';
@@ -550,6 +557,13 @@ function buildMinimal(n, t, wa, em, sd, eventBanners) {
   return h;
 }
 
+const RESPONSIVE_STYLE = '<style type="text/css">@media only screen and (max-width:480px){'
+  + '.dyn-col-www{display:none!important}'
+  + '.dyn-www-m{display:block!important}'
+  + '.dyn-col-office{width:57%!important}'
+  + '.dyn-col-factory{width:43%!important}'
+  + '}</style>';
+
 function getSigHTML() {
   const n  = getVal('f-name')  || 'Nama Karyawan';
   const t  = getVal('f-title') || 'Jabatan';
@@ -557,9 +571,11 @@ function getSigHTML() {
   const em = getVal('f-email');
   const sd = getCheck('t-disclaimer');
   const eventBanners = getActiveEventBanners();
-  if (currentStyle === 'executive') return buildExecutive(n, t, wa, em, sd, eventBanners);
-  if (currentStyle === 'minimal')   return buildMinimal(n, t, wa, em, sd, eventBanners);
-  return buildClassic(n, t, wa, em, sd, eventBanners);
+  let body;
+  if (currentStyle === 'executive') body = buildExecutive(n, t, wa, em, sd, eventBanners);
+  else if (currentStyle === 'minimal') body = buildMinimal(n, t, wa, em, sd, eventBanners);
+  else body = buildClassic(n, t, wa, em, sd, eventBanners);
+  return RESPONSIVE_STYLE + body;
 }
 
 function renderPreview() {
