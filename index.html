@@ -119,7 +119,7 @@ body {
 .pc-style-badge { font-size:10px; font-family:'Courier New',Courier,monospace; color:var(--orange); background:var(--orange-dim); padding:2px 8px; border-radius:4px; display:inline-block; margin-top:4px; }
 .pc-body { background:#ffffff; padding:24px 28px; overflow-x:auto; overflow-y:hidden; width:100%; box-sizing:border-box; }
 .pc-body > div { width:100%; box-sizing:border-box; }
-.preview-scaler { display:block; }
+.preview-scaler { display:block; min-width:560px; }
 
 /* ACTION ROW */
 .action-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
@@ -396,14 +396,14 @@ function buildBanner() {
   const topSection =
     '<table cellpadding="0" cellspacing="0" border="0" role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;background-color:#f1f2f2;background-image:radial-gradient(circle at top right,#fb6b2b 0%,#f1f2f2 22%);overflow:visible;">'
     + '<tr>'
-    + '<td valign="middle" align="left" style="padding:20px 0 20px 24px;width:33%;white-space:nowrap;" width="33%">'
-    + '<img src="' + LOGO_B64 + '" alt="Dinamika Polimerindo" width="124" height="50" style="width:124px;height:50px;display:block;border:0;outline:none;" />'
+    + '<td valign="middle" align="left" style="padding:20px 0 20px 24px;width:33%;" width="33%">'
+    + '<img src="' + LOGO_B64 + '" alt="Dinamika Polimerindo" width="124" height="50" style="max-width:124px;width:100%;height:auto;display:block;border:0;outline:none;" />'
     + '</td>'
     + '<td valign="middle" align="left" width="34%" style="width:34%;padding:20px 12px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#2a2a2a;font-weight:400;">'
     + '<div style="text-align:left;word-break:break-word;overflow-wrap:break-word;max-width:100%;">Reliable Quality in Every Shot.</div>'
     + '</td>'
-    + '<td valign="bottom" align="right" style="padding:0;width:33%;overflow:visible;" width="33%">'
-    + '<img src="' + SHAPES_B64 + '" alt="" width="120" height="120" style="width:120px;height:120px;display:block;border:0;outline:none;margin-top:-28px;" />'
+    + '<td valign="bottom" align="right" style="padding:0;width:33%;overflow:hidden;" width="33%">'
+    + '<img src="' + SHAPES_B64 + '" alt="" width="120" height="120" style="max-width:120px;width:100%;height:auto;display:block;border:0;outline:none;margin-top:-14px;" />'
     + '</td>'
     + '</tr>'
     + '</table>';
